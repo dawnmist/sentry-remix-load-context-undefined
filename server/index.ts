@@ -10,6 +10,7 @@ import helmet from 'helmet'
 import crypto from 'crypto'
 import { createRequestHandler } from '@remix-run/express'
 import { type ServerBuild, broadcastDevReady } from '@remix-run/node'
+import { wrapExpressCreateRequestHandler } from '@sentry/remix'
 import getPort, { portNumbers } from 'get-port'
 import chalk from 'chalk'
 
@@ -108,17 +109,18 @@ async function getRequestHandlerOptions(
 	return { build, mode: MODE, getLoadContext }
 }
 
+const createSentryRequestHandler =
+	wrapExpressCreateRequestHandler(createRequestHandler)
+
 app.all(
 	'*',
 	process.env.NODE_ENV === 'development'
 		? async (req, res, next) => {
-				return createRequestHandler(await getRequestHandlerOptions(devBuild))(
-					req,
-					res,
-					next,
-				)
+				return createSentryRequestHandler(
+					await getRequestHandlerOptions(devBuild),
+				)(req, res, next)
 		  }
-		: createRequestHandler(await getRequestHandlerOptions(build)),
+		: createSentryRequestHandler(await getRequestHandlerOptions(build)),
 )
 
 const desiredPort = Number(process.env.PORT || 3000)

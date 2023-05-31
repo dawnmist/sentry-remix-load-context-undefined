@@ -1,5 +1,6 @@
 import { Response, type HandleDocumentRequestFunction } from '@remix-run/node'
 import { RemixServer } from '@remix-run/react'
+import * as Sentry from '@sentry/remix'
 import isbot from 'isbot'
 import { getInstanceInfo } from 'litefs-js'
 import { renderToPipeableStream } from 'react-dom/server'
@@ -11,6 +12,14 @@ const ABORT_DELAY = 5000
 
 init()
 global.ENV = getEnv()
+
+Sentry.init({
+	dsn: ENV.SENTRY_DSN,
+	// Set tracesSampleRate to 1.0 to capture 100%
+	// of transactions for performance monitoring.
+	// We recommend adjusting this value in production
+	tracesSampleRate: 1.0,
+})
 
 type DocRequestArgs = Parameters<HandleDocumentRequestFunction>
 
