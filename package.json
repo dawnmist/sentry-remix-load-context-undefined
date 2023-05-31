@@ -48,6 +48,7 @@
     "@remix-run/router": "^1.6.1",
     "@remix-run/serve": "1.16.1",
     "@remix-run/server-runtime": "1.16.1",
+    "@sentry/remix": "^7.53.1",
     "address": "^1.2.2",
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^8.3.0",
